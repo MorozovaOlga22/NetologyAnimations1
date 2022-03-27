@@ -22,7 +22,7 @@
         app:color3="#FFDE03"
         app:color4="#FF0266"
         app:fontSize="50dp"
-        app:implementationType="sequential"
+        app:implementationType="bilateral"
         app:lineWidth="20dp" />
 </FrameLayout>
 

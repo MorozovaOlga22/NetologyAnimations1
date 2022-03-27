@@ -118,6 +118,7 @@ class StatsView @JvmOverloads constructor(
         when (implementationType) {
             0 -> drawParallel(canvas)
             1 -> drawSequential(canvas)
+            2 -> drawBilateral(canvas)
         }
 
         canvas.drawText(
@@ -150,6 +151,18 @@ class StatsView @JvmOverloads constructor(
                 startFrom += angle
             }
         }
+    }
+
+    private fun drawBilateral(canvas: Canvas) {
+        var startFrom = -90F
+        for ((index, datum) in data.withIndex()) {
+            val angle = 360F * datum
+            paint.color = colors.getOrNull(index) ?: randomColor()
+            val startAngle = startFrom + angle / 2 * (1 - progress)
+            canvas.drawArc(oval, startAngle, angle * progress, false, paint)
+            startFrom += angle
+        }
+
     }
 
     private fun update() {

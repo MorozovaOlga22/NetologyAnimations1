@@ -28,6 +28,7 @@ class StatsView @JvmOverloads constructor(
     private var lineWidth = AndroidUtils.dp(context, 5F).toFloat()
     private var fontSize = AndroidUtils.dp(context, 40F).toFloat()
     private var colors = emptyList<Int>()
+    private var implementationType = 0
 
     private var progress = 0F
     private var valueAnimator: ValueAnimator? = null
@@ -78,6 +79,7 @@ class StatsView @JvmOverloads constructor(
                     randomColor()
                 )
             )
+            implementationType = getInteger(R.styleable.StatsView_implementationType, 0)
         }
     }
 
@@ -113,6 +115,30 @@ class StatsView @JvmOverloads constructor(
             return
         }
 
+        when (implementationType) {
+            0 -> drawParallel(canvas)
+            1 -> drawSequential(canvas)
+        }
+
+        canvas.drawText(
+            "%.2f%%".format(data.sum() * 100),
+            center.x,
+            center.y + textPaint.textSize / 4,
+            textPaint,
+        )
+    }
+
+    private fun drawParallel(canvas: Canvas) {
+        var startFrom = -90F
+        for ((index, datum) in data.withIndex()) {
+            val angle = 360F * datum
+            paint.color = colors.getOrNull(index) ?: randomColor()
+            canvas.drawArc(oval, startFrom, angle * progress, false, paint)
+            startFrom += angle
+        }
+    }
+
+    private fun drawSequential(canvas: Canvas) {
         var startFrom = -90F
         val maxAngle = startFrom + 360F * progress
         for ((index, datum) in data.withIndex()) {
@@ -124,13 +150,6 @@ class StatsView @JvmOverloads constructor(
                 startFrom += angle
             }
         }
-
-        canvas.drawText(
-            "%.2f%%".format(data.sum() * 100),
-            center.x,
-            center.y + textPaint.textSize / 4,
-            textPaint,
-        )
     }
 
     private fun update() {
